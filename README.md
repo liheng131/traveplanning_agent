@@ -6,6 +6,9 @@
 2. navigation_expert 和 ticketing_expert 代理分别执行由 supervisor 分配的路径规划与票务查询任务。
 3. 所有查询任务完成后，将所有中间状态信息交由 LLM 处理，并生成最终的自然语言回复结果返回给用户。
 
+## 示例图片
+![示例图片](https://github.com/SunHao20001207/Travel_Planning/blob/main/Travel_Planning/example/%E7%A4%BA%E4%BE%8B.png?raw=true)
+
 ## 文件夹结构
 
 ```plaintext
