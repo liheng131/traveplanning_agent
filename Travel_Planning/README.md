@@ -1,10 +1,13 @@
-# Text2SQL
+# Travel_Planning
 该项目使用 LangGraph 与高德地图以及 12306 票务数据的 MCP 构建多代理系统，基于用户的出发地与目的地，实现智能路线规划。
 
 该代理由三个过程组成：
 1. supervisor 代理根据用户查询的目的地、出发地以及期望的出行方式，将整体任务分解为多个子任务。
 2. navigation_expert 和 ticketing_expert 代理分别执行由 supervisor 分配的路径规划与票务查询任务。
 3. 所有查询任务完成后，将所有中间状态信息交由 LLM 处理，并生成最终的自然语言回复结果返回给用户。
+
+## 示例图片
+![示例图片](https://github.com/SunHao20001207/Travel_Planning/blob/main/Travel_Planning/example/%E7%A4%BA%E4%BE%8B.png?raw=true)
 
 ## 文件夹结构
 
