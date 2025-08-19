@@ -169,11 +169,16 @@ async def list_and_return_tools(client):
     """
     tools = await client.get_tools()
     output_lines = []
-
+    valid_tools=[]
     # 构建工具信息字符串
     # output_lines.append("✨ Available Tools ✨")
     # output_lines.append("────────────────────")
     for i, tool in enumerate(tools, 1):
+        if isinstance(tool, str):
+            # 如果是字符串，打印一个警告，并跳过这个错误的元素
+            print(f"警告：工具列表中发现一个无效的字符串元素 '{tool}'，已自动忽略。请检查后台服务或客户端配置。")
+            continue  # 跳过当前循环的剩余部分
+        valid_tools.append(tool)  # 将有效的工具添加到新列表中
         output_lines.append(f"\n{i}. {tool.name.upper()}")
         output_lines.append(f"   {tool.description}")
 
@@ -189,7 +194,7 @@ async def list_and_return_tools(client):
     # 将列表合并为字符串
     tools_info = "\n".join(output_lines)
 
-    return tools, tools_info  # 返回工具列表和格式化字符串
+    return valid_tools, tools_info  # 返回工具列表和格式化字符串
 
 
 async def keep_last_message(state: Dict[str, Any]) -> Dict[str, Any]:

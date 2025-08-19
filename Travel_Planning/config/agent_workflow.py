@@ -6,12 +6,13 @@ from langchain.schema import HumanMessage, SystemMessage
 from langgraph.prebuilt import create_react_agent
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain.chat_models import init_chat_model
-from langchain_openai import ChatOpenAI
+# from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from typing import AsyncGenerator
 import os
 from dotenv import load_dotenv
-
+from langchain_community.chat_models import ChatTongyi
+from langchain_community.llms import Tongyi
 from .agents_config import (
     AgentState, agent_node, supervisor_router,
     list_and_return_tools, load_single_mcp_config,
@@ -24,24 +25,15 @@ from .prompts import (
 )
 
 load_dotenv(override=True)
-model = os.getenv("MODEL")
-chat_model = os.getenv("CHAT_MODEL")
+model = Tongyi()
+chat_model = ChatTongyi()
 
 
 class TravelAgent:
     def __init__(self):
-        self.llm = init_chat_model(
-            model=model,
-            temperature=0,
-            model_provider="openai",
-        )
+        self.llm = Tongyi()
         self.app = None
-        self.output_model = ChatOpenAI(
-            model=chat_model,
-            streaming=True,
-            max_retries=1,
-            max_tokens=32768
-        )
+        self.output_model = ChatTongyi()
         self.final_prompt = ChatPromptTemplate.from_messages([
             ('system', system_prompt_template),
             ('human', question_prompt_template)
@@ -57,14 +49,14 @@ class TravelAgent:
 
         # 创建各个专家代理
         agent_map = create_react_agent(
-            model=self.llm,
+            model=self.output_model,
             name="navigation_expert",
             tools=tools_map,
             prompt=SystemMessage(content=(navigation_prompt(tools_map_info)))
         )
 
         agent_mcp = create_react_agent(
-            model=self.llm,
+            model=self.output_model,
             name="ticketing_expert",
             tools=tools_mcp,
             prompt=SystemMessage(content=(ticketing_prompt(tools_mcp_info)))
@@ -72,7 +64,7 @@ class TravelAgent:
 
         supervisor = create_react_agent(
             tools=[],
-            model=self.llm,
+            model=self.output_model,
             name="supervisor",
             prompt=SystemMessage(content=supervisor_prompt()),
         )
