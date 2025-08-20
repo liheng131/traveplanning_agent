@@ -2,7 +2,7 @@
 
 import streamlit as st
 import asyncio
-from config import TravelAgent
+from Travel_Planning.backend.config import TravelAgent
 import logging
 
 # 设置页面配置

@@ -1,0 +1,131 @@
+.chat-container {
+  width: 100%;
+  max-width: 800px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.chat-history {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.message-wrapper {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.message-wrapper.user {
+  justify-content: flex-end;
+}
+
+.message-wrapper.assistant {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 80%;
+  padding: 0.75rem 1rem;
+  border-radius: 18px;
+  color: white;
+}
+.message-bubble p {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.message-wrapper.user .message-bubble {
+  background-color: #007bff;
+  border-bottom-right-radius: 4px;
+}
+
+.message-wrapper.assistant .message-bubble {
+  background-color: #e9ecef;
+  color: #333;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-input-area {
+  display: flex;
+  padding: 1rem;
+  border-top: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+}
+
+textarea {
+  flex-grow: 1;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 0.75rem 1rem;
+  resize: none;
+  font-size: 1rem;
+  font-family: inherit;
+  margin-right: 0.5rem;
+  max-height: 100px;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  font-size: 1.5rem;
+  transition: background-color 0.2s;
+}
+
+button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #a0c7ff;
+  cursor: not-allowed;
+}
+
+.loading-bubble .typing-indicator {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+.typing-indicator span {
+  height: 8px;
+  width: 8px;
+  background-color: #888;
+  border-radius: 50%;
+  margin: 0 3px;
+  animation: bounce 1.2s infinite;
+}
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1.0);
+  }
+}

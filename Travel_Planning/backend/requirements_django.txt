@@ -1,0 +1,16 @@
+# Django Core
+django
+djangorestframework
+django-cors-headers
+
+# Langchain Core & dependencies from original project
+langchain==0.3.26
+langchain-community==0.3.26
+langchain-core==0.3.66
+langchain-deepseek==0.1.3
+langchain-mcp-adapters==0.1.7
+langchain-openai==0.3.27
+langchain-text-splitters==0.3.8
+langgraph==0.5.0
+aiofiles==24.1.0
+python-dotenv
