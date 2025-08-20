@@ -121,5 +121,5 @@ class TravelAgent:
         async for chunk in chain.astream({
             "query": query,
             "context": formatted_response
-        }):都
+        }):
             yield chunk.content
