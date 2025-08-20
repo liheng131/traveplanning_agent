@@ -9,12 +9,11 @@ from langchain.chat_models import init_chat_model
 # from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from typing import AsyncGenerator
-import os
 from dotenv import load_dotenv
 from langchain_community.chat_models import ChatTongyi
 from langchain_community.llms import Tongyi
 from .agents_config import (
-    AgentState, agent_node, supervisor_router,
+    agent_node, supervisor_router,
     list_and_return_tools, load_single_mcp_config,
     parse_messages
 )
@@ -23,16 +22,23 @@ from .prompts import (
     supervisor_prompt, system_prompt_template,
     question_prompt_template
 )
+import operator
+from typing import Annotated, Sequence, TypedDict, List
+from langchain_core.messages import BaseMessage
 
 load_dotenv(override=True)
-model = Tongyi()
-chat_model = ChatTongyi()
+
+
+class AgentState(TypedDict):
+    # messages字段用于存储消息的序列，并且通过 Annotated 和 operator.add 提供了额外的信息，解释如何处理这些消息。
+    messages: Annotated[Sequence[BaseMessage], operator.add]
+    # sender 用于存储当前消息的发送者。通过这个字段，系统可以知道当前消息是由哪个代理生成的。
+    sender: Annotated[List[str], operator.add]
 
 
 class TravelAgent:
     def __init__(self):
-        self.llm = Tongyi()
-        self.app = None
+        self.app = None  # 图应用
         self.output_model = ChatTongyi()
         self.final_prompt = ChatPromptTemplate.from_messages([
             ('system', system_prompt_template),
@@ -41,6 +47,7 @@ class TravelAgent:
 
     async def initialize(self):
         """初始化代理和工作流"""
+        # 进入
         client_map = MultiServerMCPClient(await load_single_mcp_config("amap-maps"))
         client_mcp = MultiServerMCPClient(await load_single_mcp_config("12306-mcp"))
 
@@ -102,7 +109,12 @@ class TravelAgent:
         agent_response = await self.app.ainvoke(
             {"messages": [HumanMessage(content=query)]}
         )
+        print(agent_response)
         formatted_response = await parse_messages(agent_response['messages'])
+        print("_________1_______")
+        print(formatted_response)
+        print("_________2_______")
+        print("以上是原始响应")
 
         # 第二步：使用大模型生成最终响应
         chain = self.final_prompt | self.output_model

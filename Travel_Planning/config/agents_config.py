@@ -2,22 +2,13 @@
 
 import os
 from typing import Literal
-from langchain.schema import  AIMessage
+from langchain.schema import AIMessage
 import re
 from typing import List, Any, Dict
-from langchain_core.messages import BaseMessage
-import operator
-from typing import Annotated, Sequence, TypedDict
 import json
 import aiofiles
 from dotenv import load_dotenv
-
-
-class AgentState(TypedDict):
-    # messages字段用于存储消息的序列，并且通过 Annotated 和 operator.add 提供了额外的信息，解释如何处理这些消息。
-    messages: Annotated[Sequence[BaseMessage], operator.add]
-    # sender 用于存储当前消息的发送者。通过这个字段，系统可以知道当前消息是由哪个代理生成的。
-    sender: str
+from langchain_core.messages import BaseMessage
 
 
 async def load_single_mcp_config(key: str, file_path: str = "servers_config.json") -> str:
@@ -30,6 +21,7 @@ async def load_single_mcp_config(key: str, file_path: str = "servers_config.json
             return {k: resolve_env_vars(v) for k, v in config.items()}
         elif isinstance(config, list):
             return [resolve_env_vars(i) for i in config]
+        #
         elif isinstance(config, str) and config.startswith("${") and config.endswith("}"):
             var_name = config[2:-1]
             return os.environ.get(var_name, "")
@@ -42,7 +34,8 @@ async def load_single_mcp_config(key: str, file_path: str = "servers_config.json
         config = resolve_env_vars(config)
         selected = config.get("mcpServers", {}).get(key)
         result = {key: selected} if selected else {}
-        return json.loads(json.dumps(result, indent=2, ensure_ascii=False))
+        res = json.loads(json.dumps(result, indent=2, ensure_ascii=False))
+        return res
 
 
 async def parse_messages(messages: List[Any]) -> str:
@@ -169,9 +162,8 @@ async def list_and_return_tools(client):
     """
     tools = await client.get_tools()
     output_lines = []
-    valid_tools=[]
+    valid_tools = []
     # 构建工具信息字符串
-    # output_lines.append("✨ Available Tools ✨")
     # output_lines.append("────────────────────")
     for i, tool in enumerate(tools, 1):
         if isinstance(tool, str):
@@ -226,8 +218,6 @@ async def keep_last_message(state: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def agent_node(state, agent, name):
-
-    print()
     # 调用代理
     if name == "supervisor":
         agent_response = await agent.ainvoke(state)
@@ -236,19 +226,17 @@ async def agent_node(state, agent, name):
         new_state = await keep_last_message(state)
         agent_response = await agent.ainvoke(new_state)
 
-    #agent_response = await agent.ainvoke(state)
+    # agent_response = await agent.ainvoke(state)
 
     agent_response_content = agent_response['messages'][-1].content
 
     return {
         "messages": [AIMessage(content=str(agent_response_content), name=name)],
-        "sender": name,
+        "sender": [name],
     }
 
 
 async def supervisor_router(state) -> Literal["navigation_expert", "ticketing_expert", "__end__"]:
-    print()
-
     messages = state["messages"]
     if not messages:
         return "__end__"  # 空消息直接终止
@@ -309,64 +297,3 @@ def save_graph_visualization(graph, filename: str = "graph_app.png") -> None:
     except IOError as e:
         # 记录警告日志
         print(f"Failed to save graph visualization: {e}")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
