@@ -44,10 +44,8 @@ DEBUG = True
 STATIC_URL = 'static/'
 # 添加 CORS 配置，允许前端访问
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Vite 的默认端口
-    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5173", "http://localhost:5173"
 ]
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5173", "http://localhost:5173"
 ]

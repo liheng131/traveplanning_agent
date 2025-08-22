@@ -39,7 +39,7 @@ class AgentState(TypedDict):
 class TravelAgent:
     def __init__(self):
         self.app = None  # 图应用
-        self.output_model = ChatTongyi()
+        self.output_model = ChatTongyi(model='qwen-turbo-latest')
         self.final_prompt = ChatPromptTemplate.from_messages([
             ('system', system_prompt_template),
             ('human', question_prompt_template)
